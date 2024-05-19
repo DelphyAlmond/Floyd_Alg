@@ -7,8 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
 
-namespace FloydAlg // ili kak ghe ya zaebalas
+namespace FloydAlg
 {
     public partial class Scene : Form
     {
@@ -19,7 +20,7 @@ namespace FloydAlg // ili kak ghe ya zaebalas
         private List<StateStep> steps;
         private Graph graph;
 
-        int IndexOfCurrentAction = 0;
+        int indexOfCurrentAction = 0;
 
         InformationForm form;
 
@@ -28,6 +29,10 @@ namespace FloydAlg // ili kak ghe ya zaebalas
             InitializeComponent();
             vertexPositions = new Dictionary<string, Point>();
             Connector.Enabled = false;
+
+            // unable resize
+            FormBorderStyle = FormBorderStyle.Fixed3D;
+
             // keep an eye on current graph
             graph = new Graph();
             steps = new List<StateStep>();
@@ -43,10 +48,10 @@ namespace FloydAlg // ili kak ghe ya zaebalas
             steps.Add(state);
 
             stateBox.Items.Add(state); // adds to the listBox
-            IndexOfCurrentAction++;
+            indexOfCurrentAction++;
         }
 
-        private bool moreThanOneVertex()
+        private bool MoreThanOneVertex()
         {
             return graph.Vertices.Count > 1;
         }
@@ -79,7 +84,7 @@ namespace FloydAlg // ili kak ghe ya zaebalas
                     // ------------------------ [ STATUS UPDATE ]
 
                     // Redraw the graph
-                    RedrawGraph();
+                    CanvasRedraw.RedrawGraph(graphPanel, graph, vertexPositions);
                 }
 
                 else MessageBox.Show("One or more selected vertices do not exist in the graph.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -98,7 +103,7 @@ namespace FloydAlg // ili kak ghe ya zaebalas
                 AddStateStep("> New vertex '" + vertexName + "' added"); // ------------------------ [ STATUS UPDATE ]
 
                 // Enable groupBox if 2 already exist and I can connect them
-                if (moreThanOneVertex()) Connector.Enabled = true;
+                if (MoreThanOneVertex()) Connector.Enabled = true;
             }
             else MessageBox.Show("Please enter a valid vertex name or select existing vertices.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
@@ -120,91 +125,9 @@ namespace FloydAlg // ili kak ghe ya zaebalas
             vertexPositions[vertexName] = position;
 
             // Redraw the graph
-            RedrawGraph();
-        }
+            CanvasRedraw.RedrawGraph(graphPanel, graph, vertexPositions);
 
-        private void RedrawGraph()
-        {
-            using (Graphics g = graphPanel.CreateGraphics())
-            {
-                g.Clear(Color.White);
-
-                // Draw vertices
-                foreach (var entry in vertexPositions)
-                {
-                    string vertexName = entry.Key;
-                    Point center = entry.Value;
-                    g.FillEllipse(Brushes.DeepPink, center.X - 20, center.Y - 20, 40, 40); // Color of circules
-                    g.DrawString(vertexName, Font, Brushes.White, center.X - 12, center.Y - 18);
-                }
-
-                // Draw connections
-                foreach (var vertex in graph.Vertices.Values)
-                {
-                    if (vertexPositions.ContainsKey(vertex.Name))
-                    {
-                        Point sourceCenter = vertexPositions[vertex.Name];
-
-                        foreach (var neighbor in vertex.Connections)
-                        {
-                            if (vertexPositions.ContainsKey(neighbor.Key.Name))
-                            {
-                                Point destinationCenter = vertexPositions[neighbor.Key.Name];
-
-                                // int x_weight = 0, y_weight = 0;
-
-                                // [ EDIT ] --------------------- Arrows
-                                if (sourceCenter.X > destinationCenter.X)
-                                {
-                                    destinationCenter.X += 5;
-                                    sourceCenter.X -= 5;
-                                }
-                                else
-                                {
-                                    destinationCenter.X -= 6;
-                                    sourceCenter.X += 6;
-                                }
-
-                                if (sourceCenter.Y > destinationCenter.Y)
-                                {
-                                    destinationCenter.Y += 8;
-                                    sourceCenter.Y -= 8;
-                                }
-                                else
-                                {
-                                    destinationCenter.Y -= 10;
-                                    sourceCenter.Y += 10;
-                                }
-
-                                DrawArrow(g, sourceCenter, destinationCenter);
-                                g.DrawString(neighbor.Value.ToString(), Font, Brushes.Teal, 
-                                    Math.Abs(destinationCenter.X - sourceCenter.X), 
-                                    Math.Abs(destinationCenter.Y - sourceCenter.X));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private void DrawArrow(Graphics g, Point source, Point destination)
-        {
-            Pen line = new Pen(Color.Teal, 3);
-            g.DrawLine(line, source, destination);
-
-            // Calculate arrowhead points and angle of them ETC. --------------- [ EDIT ]
-            double angle = Math.Atan2(destination.Y - source.Y, destination.X - source.X);
-
-            Point arrowSide1 = new Point(
-                (int)(destination.X - 25 * Math.Cos(angle - Math.PI / 9)),
-                (int)(destination.Y - 25 * Math.Sin(angle - Math.PI / 9)));
-            Point arrowSide2 = new Point(
-                (int)(destination.X - 25 * Math.Cos(angle + Math.PI / 9)),
-                (int)(destination.Y - 25 * Math.Sin(angle + Math.PI / 9)));
-
-            // Draw arrowhead
-            g.DrawLine(line, destination, arrowSide1);
-            g.DrawLine(line, destination, arrowSide2);
+            fileWritingDown(); // writing down to file
         }
 
         private void btnClear_Click(object sender, EventArgs e)
@@ -221,6 +144,8 @@ namespace FloydAlg // ili kak ghe ya zaebalas
             AddStateStep("> Everything was removed ");
 
             graphPanel.Refresh(); // Clear the graph panel
+
+            fileWritingDown(); // writing down to file
         }
 
         private void btnRunAlgorithm_Click(object sender, EventArgs e)
@@ -319,10 +244,12 @@ namespace FloydAlg // ili kak ghe ya zaebalas
                 AddStateStep("> Vertex '" + vertexToDelete + "' was removed ");
 
                 // Redraw the graph to reflect the changes
-                RedrawGraph();
+                CanvasRedraw.RedrawGraph(graphPanel, graph, vertexPositions);
 
                 // Update UI based on the graph state
-                if (moreThanOneVertex()) Connector.Enabled = true;
+                if (MoreThanOneVertex()) Connector.Enabled = true;
+
+                fileWritingDown(); // write down to txt file
             }
 
             else
@@ -331,24 +258,28 @@ namespace FloydAlg // ili kak ghe ya zaebalas
             }
         }
 
+        private void fileWritingDown()
+        {
+            // create new class !!!
+
+        }
+
         private void prevState_Click(object sender, EventArgs e)
         {
-            if (IndexOfCurrentAction > 0) graph = steps[--IndexOfCurrentAction].GraphSnapshot;
-            RedrawGraph();
+            if (indexOfCurrentAction > 0) graph = steps[--indexOfCurrentAction].GraphSnapshot;
+            CanvasRedraw.RedrawGraph(graphPanel, graph, vertexPositions);
         }
 
         private void nextState_Click(object sender, EventArgs e)
         {
-            if (IndexOfCurrentAction < steps.Count - 1) graph = steps[++IndexOfCurrentAction].GraphSnapshot;
-            RedrawGraph();
+            if (indexOfCurrentAction < steps.Count - 1) graph = steps[++indexOfCurrentAction].GraphSnapshot;
+            CanvasRedraw.RedrawGraph(graphPanel, graph, vertexPositions);
         }
 
         private void InfButton_Click(object sender, EventArgs e)
         {
             form = new InformationForm();
             form.Show();
-            // form.Activate();
-            // if (form.ShowDialog() == DialogResult.Cancel) return;
         }
     }
 }

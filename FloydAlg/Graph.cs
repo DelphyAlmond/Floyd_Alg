@@ -59,21 +59,4 @@ namespace FloydAlg
             Vertices.Clear();
         }
     }
-
-    public class Vertex
-    {
-        public string Name { get; }
-        public Dictionary<Vertex, int> Connections { get; }
-
-        public Vertex(string name)
-        {
-            Name = name;
-            Connections = new Dictionary<Vertex, int>();
-        }
-
-        public void AddConnection(Vertex neighbor, int weight)
-        {
-            Connections[neighbor] = weight; // obj of vertex <-> price of connection
-        }
-    }
 }

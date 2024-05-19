@@ -45,6 +45,7 @@
             btnRunAlgorithm = new Button();
             Matrixpanel = new Panel();
             InfButton = new Button();
+            matrixCalculations = new Button();
             ((System.ComponentModel.ISupportInitialize)numConnectionWeight).BeginInit();
             Connector.SuspendLayout();
             SuspendLayout();
@@ -52,9 +53,9 @@
             // btnAddVertex
             // 
             btnAddVertex.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnAddVertex.Location = new Point(899, 798);
+            btnAddVertex.Location = new Point(871, 825);
             btnAddVertex.Name = "btnAddVertex";
-            btnAddVertex.Size = new Size(153, 46);
+            btnAddVertex.Size = new Size(216, 46);
             btnAddVertex.TabIndex = 0;
             btnAddVertex.Text = "Add";
             btnAddVertex.UseVisualStyleBackColor = true;
@@ -63,15 +64,15 @@
             // txtVertexName
             // 
             txtVertexName.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            txtVertexName.Location = new Point(1071, 802);
+            txtVertexName.Location = new Point(1103, 829);
             txtVertexName.Name = "txtVertexName";
-            txtVertexName.Size = new Size(122, 39);
+            txtVertexName.Size = new Size(114, 39);
             txtVertexName.TabIndex = 1;
             // 
             // startV
             // 
             startV.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            startV.Location = new Point(34, 87);
+            startV.Location = new Point(94, 79);
             startV.Name = "startV";
             startV.Size = new Size(130, 39);
             startV.TabIndex = 2;
@@ -80,7 +81,7 @@
             // destinationV
             // 
             destinationV.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            destinationV.Location = new Point(312, 87);
+            destinationV.Location = new Point(372, 79);
             destinationV.Name = "destinationV";
             destinationV.Size = new Size(116, 39);
             destinationV.TabIndex = 3;
@@ -89,7 +90,7 @@
             // numConnectionWeight
             // 
             numConnectionWeight.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            numConnectionWeight.Location = new Point(184, 88);
+            numConnectionWeight.Location = new Point(244, 80);
             numConnectionWeight.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numConnectionWeight.Name = "numConnectionWeight";
             numConnectionWeight.Size = new Size(110, 39);
@@ -101,7 +102,7 @@
             noUseLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             noUseLabel.AutoSize = true;
             noUseLabel.ForeColor = SystemColors.ControlLightLight;
-            noUseLabel.Location = new Point(31, 33);
+            noUseLabel.Location = new Point(91, 35);
             noUseLabel.Name = "noUseLabel";
             noUseLabel.Size = new Size(394, 32);
             noUseLabel.TabIndex = 5;
@@ -115,9 +116,9 @@
             Connector.Controls.Add(startV);
             Connector.Controls.Add(destinationV);
             Connector.ForeColor = SystemColors.ButtonHighlight;
-            Connector.Location = new Point(899, 852);
+            Connector.Location = new Point(871, 879);
             Connector.Name = "Connector";
-            Connector.Size = new Size(461, 142);
+            Connector.Size = new Size(571, 142);
             Connector.TabIndex = 6;
             Connector.TabStop = false;
             Connector.Text = "Connector";
@@ -126,15 +127,15 @@
             // 
             graphPanel.Location = new Point(14, 12);
             graphPanel.Name = "graphPanel";
-            graphPanel.Size = new Size(867, 982);
+            graphPanel.Size = new Size(836, 1009);
             graphPanel.TabIndex = 7;
             // 
             // btnClear
             // 
             btnClear.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnClear.Location = new Point(899, 12);
+            btnClear.Location = new Point(871, 12);
             btnClear.Name = "btnClear";
-            btnClear.Size = new Size(461, 46);
+            btnClear.Size = new Size(571, 46);
             btnClear.TabIndex = 8;
             btnClear.Text = "Start new graph (remove all)";
             btnClear.UseVisualStyleBackColor = true;
@@ -143,9 +144,9 @@
             // btnRemoveVertex
             // 
             btnRemoveVertex.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnRemoveVertex.Location = new Point(1211, 798);
+            btnRemoveVertex.Location = new Point(1232, 825);
             btnRemoveVertex.Name = "btnRemoveVertex";
-            btnRemoveVertex.Size = new Size(149, 46);
+            btnRemoveVertex.Size = new Size(210, 46);
             btnRemoveVertex.TabIndex = 9;
             btnRemoveVertex.Text = "Delete";
             btnRemoveVertex.UseVisualStyleBackColor = true;
@@ -154,9 +155,9 @@
             // prevState
             // 
             prevState.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            prevState.Location = new Point(899, 738);
+            prevState.Location = new Point(871, 765);
             prevState.Name = "prevState";
-            prevState.Size = new Size(230, 46);
+            prevState.Size = new Size(284, 46);
             prevState.TabIndex = 10;
             prevState.Text = "Previous step";
             prevState.UseVisualStyleBackColor = true;
@@ -165,9 +166,9 @@
             // nextState
             // 
             nextState.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            nextState.Location = new Point(1143, 738);
+            nextState.Location = new Point(1172, 765);
             nextState.Name = "nextState";
-            nextState.Size = new Size(217, 46);
+            nextState.Size = new Size(270, 46);
             nextState.TabIndex = 11;
             nextState.Text = "Next step";
             nextState.UseVisualStyleBackColor = true;
@@ -178,7 +179,7 @@
             label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             label1.AutoSize = true;
             label1.ForeColor = SystemColors.ButtonHighlight;
-            label1.Location = new Point(1029, 491);
+            label1.Location = new Point(1061, 579);
             label1.Name = "label1";
             label1.Size = new Size(195, 32);
             label1.TabIndex = 6;
@@ -190,17 +191,17 @@
             stateBox.BackColor = Color.DarkCyan;
             stateBox.ForeColor = SystemColors.Window;
             stateBox.FormattingEnabled = true;
-            stateBox.Location = new Point(899, 526);
+            stateBox.Location = new Point(871, 614);
             stateBox.Name = "stateBox";
-            stateBox.Size = new Size(461, 196);
+            stateBox.Size = new Size(571, 132);
             stateBox.TabIndex = 12;
             // 
             // btnRunAlgorithm
             // 
             btnRunAlgorithm.Anchor = AnchorStyles.Right;
-            btnRunAlgorithm.Location = new Point(899, 425);
+            btnRunAlgorithm.Location = new Point(871, 534);
             btnRunAlgorithm.Name = "btnRunAlgorithm";
-            btnRunAlgorithm.Size = new Size(465, 42);
+            btnRunAlgorithm.Size = new Size(571, 42);
             btnRunAlgorithm.TabIndex = 13;
             btnRunAlgorithm.Text = "Implement Floyd W. algorithm";
             btnRunAlgorithm.UseVisualStyleBackColor = true;
@@ -209,15 +210,15 @@
             // Matrixpanel
             // 
             Matrixpanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            Matrixpanel.Location = new Point(899, 74);
+            Matrixpanel.Location = new Point(871, 74);
             Matrixpanel.Name = "Matrixpanel";
-            Matrixpanel.Size = new Size(354, 335);
+            Matrixpanel.Size = new Size(464, 442);
             Matrixpanel.TabIndex = 14;
             // 
             // InfButton
             // 
             InfButton.ForeColor = SystemColors.ActiveCaptionText;
-            InfButton.Location = new Point(1270, 243);
+            InfButton.Location = new Point(1352, 350);
             InfButton.Name = "InfButton";
             InfButton.Size = new Size(90, 166);
             InfButton.TabIndex = 15;
@@ -225,12 +226,23 @@
             InfButton.UseVisualStyleBackColor = true;
             InfButton.Click += InfButton_Click;
             // 
+            // matrixCalculations
+            // 
+            matrixCalculations.ForeColor = SystemColors.ActiveCaptionText;
+            matrixCalculations.Location = new Point(1352, 74);
+            matrixCalculations.Name = "matrixCalculations";
+            matrixCalculations.Size = new Size(90, 253);
+            matrixCalculations.TabIndex = 16;
+            matrixCalculations.Text = "Next Algorithm step";
+            matrixCalculations.UseVisualStyleBackColor = true;
+            // 
             // Scene
             // 
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Teal;
-            ClientSize = new Size(1372, 1015);
+            ClientSize = new Size(1454, 1042);
+            Controls.Add(matrixCalculations);
             Controls.Add(InfButton);
             Controls.Add(Matrixpanel);
             Controls.Add(btnRunAlgorithm);
@@ -277,5 +289,6 @@
         private Button btnRunAlgorithm;
         private Panel Matrixpanel;
         private Button InfButton;
+        private Button matrixCalculations;
     }
 }
