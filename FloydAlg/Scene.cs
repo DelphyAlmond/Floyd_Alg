@@ -19,6 +19,8 @@ namespace FloydAlg
 
         private List<StateStep> steps;
         private Graph graph;
+        private FloydWarshallAlg algorithmImplementation;
+        private CanvasRedraw drawTool;
 
         int indexOfCurrentAction = 0;
 
@@ -36,6 +38,7 @@ namespace FloydAlg
             // keep an eye on current graph
             graph = new Graph();
             steps = new List<StateStep>();
+            drawTool = new CanvasRedraw();
             // empty beginning
             steps.Add(new StateStep("> Obj of Graph created (start)", graph));
         }
@@ -84,7 +87,7 @@ namespace FloydAlg
                     // ------------------------ [ STATUS UPDATE ]
 
                     // Redraw the graph
-                    CanvasRedraw.RedrawGraph(graphPanel, graph, vertexPositions);
+                    drawTool.RedrawGraph(graphPanel, graph, vertexPositions);
                 }
 
                 else MessageBox.Show("One or more selected vertices do not exist in the graph.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -125,7 +128,7 @@ namespace FloydAlg
             vertexPositions[vertexName] = position;
 
             // Redraw the graph
-            CanvasRedraw.RedrawGraph(graphPanel, graph, vertexPositions);
+            drawTool.RedrawGraph(graphPanel, graph, vertexPositions);
 
             fileWritingDown(); // writing down to file
         }
@@ -150,27 +153,26 @@ namespace FloydAlg
 
         private void btnRunAlgorithm_Click(object sender, EventArgs e)
         {
-            FloydWarshallAlg alg = new FloydWarshallAlg(graph);
-            int[,] currentMatrix = alg.currentFill;
-            int cnt = alg.elms;
+            algorithmImplementation = new FloydWarshallAlg(graph);
+            int[,] currentMatrix = algorithmImplementation.currentFill;
+            int cnt = algorithmImplementation.elms;
             // represent in graphics
             //  ( Label[,] numbers = new Label[cnt, cnt]; )
             int lbW = 40;
             int lbH = 30;
 
-            DrawMatrix(currentMatrix, cnt, lbW, lbH);
-
-            alg.SearchPath(); // recounted with 101(infinity\max)
-            currentMatrix = alg.currentFill;
-
             // DrawMatrix(currentMatrix, cnt, lbW, lbH);
+
+            algorithmImplementation.SearchPath(); // recounted with 101(infinity\max)
+            currentMatrix = algorithmImplementation.currentFill;
+            DrawMatrix(currentMatrix, cnt, lbW, lbH);
         }
 
-        private void DrawMatrix(int[,] mtx, int n, int w, int h)
+        private void DrawMatrix(int[,] mtx, int n, int w, int h) // n is size of all 2DArr
         {
             Graphics g = Matrixpanel.CreateGraphics();
 
-            if (mtx.Length == 0 && n == 0 && w == 0 && h == 0)
+            if (mtx.Length == 0 || n == 0 || w == 0 || h == 0)
             {
                 Matrixpanel.Controls.Clear();
                 g.Clear(Color.Teal);
@@ -197,7 +199,7 @@ namespace FloydAlg
                 {
                     Label newLb = new Label();
 
-                    if (mtx[i, j] > 100) newLb.Text = "~";
+                    if (mtx[i, j] > 100 || mtx[i, j] == -1) newLb.Text = "~";
                     else newLb.Text = mtx[i, j].ToString();
 
                     newLb.ForeColor = Color.White;
@@ -228,7 +230,8 @@ namespace FloydAlg
 
         private void btnRemoveVertex_Click(object sender, EventArgs e)
         {
-            string vertexToDelete = txtVertexName.Text.Trim(); // Assuming txtVertexToDelete is a TextBox to enter the vertex name to delete
+            string vertexToDelete = txtVertexName.Text.Trim();
+            // Assuming txtVertexToDelete is a TextBox to enter the vertex name to delete
 
             if (graph.Vertices.ContainsKey(vertexToDelete))
             {
@@ -244,7 +247,7 @@ namespace FloydAlg
                 AddStateStep("> Vertex '" + vertexToDelete + "' was removed ");
 
                 // Redraw the graph to reflect the changes
-                CanvasRedraw.RedrawGraph(graphPanel, graph, vertexPositions);
+                drawTool.RedrawGraph(graphPanel, graph, vertexPositions);
 
                 // Update UI based on the graph state
                 if (MoreThanOneVertex()) Connector.Enabled = true;
@@ -252,10 +255,8 @@ namespace FloydAlg
                 fileWritingDown(); // write down to txt file
             }
 
-            else
-            {
-                MessageBox.Show("Vertex not found in the graph.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            else MessageBox.Show("Vertex not found in the graph.", "Error",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void fileWritingDown()
@@ -267,13 +268,13 @@ namespace FloydAlg
         private void prevState_Click(object sender, EventArgs e)
         {
             if (indexOfCurrentAction > 0) graph = steps[--indexOfCurrentAction].GraphSnapshot;
-            CanvasRedraw.RedrawGraph(graphPanel, graph, vertexPositions);
+            drawTool.RedrawGraph(graphPanel, graph, vertexPositions);
         }
 
         private void nextState_Click(object sender, EventArgs e)
         {
             if (indexOfCurrentAction < steps.Count - 1) graph = steps[++indexOfCurrentAction].GraphSnapshot;
-            CanvasRedraw.RedrawGraph(graphPanel, graph, vertexPositions);
+            drawTool.RedrawGraph(graphPanel, graph, vertexPositions);
         }
 
         private void InfButton_Click(object sender, EventArgs e)
@@ -281,6 +282,33 @@ namespace FloydAlg
             form = new InformationForm();
             form.Show();
         }
+
+        private void btnShortestBetween_Click(object sender, EventArgs e) // [highlight added]
+        {
+            drawTool.RedrawGraph(graphPanel, graph, vertexPositions);
+            // algorithmImplementation = new FloydWarshallAlg(graph);
+            if ((VertexFromBox.Text != null && VertexToBox.Text != null) &&
+                graph.Vertices.ContainsKey(VertexFromBox.Text) &&
+                graph.Vertices.ContainsKey(VertexToBox.Text))
+            {
+                int shEdge = algorithmImplementation.GetShortestDistance(VertexFromBox.Text, VertexToBox.Text);
+                ShortestEdgeLabel.Text = shEdge.ToString();
+
+                List<String> pathBetween = algorithmImplementation.GetShortestPath(VertexFromBox.Text, VertexToBox.Text);
+                drawTool.drawVertexPath(graphPanel, vertexPositions, pathBetween);
+            }
+            else MessageBox.Show("Check if textBoxes are filled with existing vertecies.",
+                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        /*  [ Unnecessary ]
+        private void matrixCalculations_Click(object sender, EventArgs e)
+        {
+            int[,] newCurrentMatrix = algorithmImplementation.GetNextAlgStep();
+            DrawMatrix(newCurrentMatrix, newCurrentMatrix.Length,
+                newCurrentMatrix.GetLength(1), newCurrentMatrix.GetLength(0)); // all elements w * h, w, h);
+        }
+        */
     }
 }
 

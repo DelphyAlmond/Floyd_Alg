@@ -91,8 +91,11 @@ namespace FloydAlg
             currentFill = dist;
         }
 
-        /* Use after second step of recounting [ !!! ]     -----   [!] add functions and buttons to
-         * the form, printing next steps of recounting matrix
+        public int[,] GetNextAlgStep()
+        {
+            return next;
+        }
+
         public int GetShortestDistance(string start, string end)
         {
             if (vertexIndexMap.ContainsKey(start) && vertexIndexMap.ContainsKey(end))
@@ -101,16 +104,14 @@ namespace FloydAlg
                 int endIndex = vertexIndexMap[end];
                 return dist[startIndex, endIndex];
             }
-            else
+            else // Vertices are not found
             {
-                // Return - if vertices are not found (change to 101 [?])
                 return -1;
             }
         }
-        */
 
-        /* No use with the dict [?]
-        public List<string> GetShortestPath(string start, string end, Graph gr)
+        /* Add use with the dict in Scene [!] ^^^ connect with prev. function */
+        public List<string> GetShortestPath(string start, string end)
         {
             List<string> path = new List<string>();
 
@@ -118,18 +119,19 @@ namespace FloydAlg
             {
                 int startIndex = vertexIndexMap[start];
                 int endIndex = vertexIndexMap[end];
-
                 if (next[startIndex, endIndex] == -1)
                 {
                     // No path exists
-                    return path;
+                    return null;
                 }
+
+                List<string> keys = vertexIndexMap.Keys.ToList();
 
                 // Reconstruct shortest path using next array
                 int current = startIndex;
                 while (current != endIndex)
                 {
-                    path.Add("");
+                    path.Add(keys[current]);
                     current = next[current, endIndex];
                 }
                 path.Add(end);
@@ -137,6 +139,5 @@ namespace FloydAlg
 
             return path;
         }
-        */
     }
 }
