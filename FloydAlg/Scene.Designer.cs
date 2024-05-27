@@ -51,6 +51,7 @@
             VertexFromBox = new TextBox();
             VertexToBox = new TextBox();
             ShortestEdgeLabel = new Label();
+            btnNextMtxStep = new Button();
             ((System.ComponentModel.ISupportInitialize)numConnectionWeight).BeginInit();
             Connector.SuspendLayout();
             SuspendLayout();
@@ -58,7 +59,7 @@
             // btnAddVertex
             // 
             btnAddVertex.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnAddVertex.Location = new Point(929, 929);
+            btnAddVertex.Location = new Point(945, 956);
             btnAddVertex.Name = "btnAddVertex";
             btnAddVertex.Size = new Size(216, 46);
             btnAddVertex.TabIndex = 0;
@@ -69,7 +70,7 @@
             // txtVertexName
             // 
             txtVertexName.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            txtVertexName.Location = new Point(1161, 933);
+            txtVertexName.Location = new Point(1177, 960);
             txtVertexName.Name = "txtVertexName";
             txtVertexName.Size = new Size(114, 39);
             txtVertexName.TabIndex = 1;
@@ -121,7 +122,7 @@
             Connector.Controls.Add(startV);
             Connector.Controls.Add(destinationV);
             Connector.ForeColor = SystemColors.ButtonHighlight;
-            Connector.Location = new Point(929, 983);
+            Connector.Location = new Point(945, 1010);
             Connector.Name = "Connector";
             Connector.Size = new Size(571, 142);
             Connector.TabIndex = 6;
@@ -132,13 +133,13 @@
             // 
             graphPanel.Location = new Point(14, 12);
             graphPanel.Name = "graphPanel";
-            graphPanel.Size = new Size(900, 1113);
+            graphPanel.Size = new Size(900, 1140);
             graphPanel.TabIndex = 7;
             // 
             // btnClear
             // 
             btnClear.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnClear.Location = new Point(929, 12);
+            btnClear.Location = new Point(945, 12);
             btnClear.Name = "btnClear";
             btnClear.Size = new Size(571, 46);
             btnClear.TabIndex = 8;
@@ -149,7 +150,7 @@
             // btnRemoveVertex
             // 
             btnRemoveVertex.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnRemoveVertex.Location = new Point(1290, 929);
+            btnRemoveVertex.Location = new Point(1306, 956);
             btnRemoveVertex.Name = "btnRemoveVertex";
             btnRemoveVertex.Size = new Size(210, 46);
             btnRemoveVertex.TabIndex = 9;
@@ -160,7 +161,7 @@
             // prevState
             // 
             prevState.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            prevState.Location = new Point(929, 869);
+            prevState.Location = new Point(945, 896);
             prevState.Name = "prevState";
             prevState.Size = new Size(284, 46);
             prevState.TabIndex = 10;
@@ -171,7 +172,7 @@
             // nextState
             // 
             nextState.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            nextState.Location = new Point(1230, 869);
+            nextState.Location = new Point(1246, 896);
             nextState.Name = "nextState";
             nextState.Size = new Size(270, 46);
             nextState.TabIndex = 11;
@@ -184,7 +185,7 @@
             NotusedLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             NotusedLabel.AutoSize = true;
             NotusedLabel.ForeColor = SystemColors.ButtonHighlight;
-            NotusedLabel.Location = new Point(1119, 579);
+            NotusedLabel.Location = new Point(1135, 615);
             NotusedLabel.Name = "NotusedLabel";
             NotusedLabel.Size = new Size(195, 32);
             NotusedLabel.TabIndex = 6;
@@ -196,7 +197,7 @@
             stateBox.BackColor = Color.DarkCyan;
             stateBox.ForeColor = SystemColors.Window;
             stateBox.FormattingEnabled = true;
-            stateBox.Location = new Point(929, 614);
+            stateBox.Location = new Point(945, 651);
             stateBox.Name = "stateBox";
             stateBox.Size = new Size(571, 228);
             stateBox.TabIndex = 12;
@@ -204,7 +205,7 @@
             // btnRunAlgorithm
             // 
             btnRunAlgorithm.Anchor = AnchorStyles.Right;
-            btnRunAlgorithm.Location = new Point(929, 534);
+            btnRunAlgorithm.Location = new Point(945, 570);
             btnRunAlgorithm.Name = "btnRunAlgorithm";
             btnRunAlgorithm.Size = new Size(571, 42);
             btnRunAlgorithm.TabIndex = 13;
@@ -215,17 +216,17 @@
             // Matrixpanel
             // 
             Matrixpanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            Matrixpanel.Location = new Point(929, 74);
+            Matrixpanel.Location = new Point(945, 74);
             Matrixpanel.Name = "Matrixpanel";
-            Matrixpanel.Size = new Size(422, 388);
+            Matrixpanel.Size = new Size(422, 412);
             Matrixpanel.TabIndex = 14;
             // 
             // InfButton
             // 
             InfButton.ForeColor = SystemColors.ActiveCaptionText;
-            InfButton.Location = new Point(1357, 74);
+            InfButton.Location = new Point(1373, 74);
             InfButton.Name = "InfButton";
-            InfButton.Size = new Size(143, 241);
+            InfButton.Size = new Size(143, 77);
             InfButton.TabIndex = 15;
             InfButton.Text = "INFO";
             InfButton.UseVisualStyleBackColor = true;
@@ -234,9 +235,9 @@
             // btnShortestBetween
             // 
             btnShortestBetween.ForeColor = SystemColors.ActiveCaptionText;
-            btnShortestBetween.Location = new Point(1357, 335);
+            btnShortestBetween.Location = new Point(1373, 362);
             btnShortestBetween.Name = "btnShortestBetween";
-            btnShortestBetween.Size = new Size(143, 127);
+            btnShortestBetween.Size = new Size(143, 124);
             btnShortestBetween.TabIndex = 17;
             btnShortestBetween.Text = "Show shortest path";
             btnShortestBetween.UseVisualStyleBackColor = true;
@@ -255,7 +256,7 @@
             labelUnabled.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             labelUnabled.AutoSize = true;
             labelUnabled.ForeColor = SystemColors.ButtonHighlight;
-            labelUnabled.Location = new Point(920, 484);
+            labelUnabled.Location = new Point(946, 513);
             labelUnabled.Name = "labelUnabled";
             labelUnabled.Size = new Size(482, 32);
             labelUnabled.TabIndex = 19;
@@ -264,7 +265,7 @@
             // VertexFromBox
             // 
             VertexFromBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            VertexFromBox.Location = new Point(1220, 482);
+            VertexFromBox.Location = new Point(1247, 506);
             VertexFromBox.Name = "VertexFromBox";
             VertexFromBox.Size = new Size(45, 39);
             VertexFromBox.TabIndex = 20;
@@ -272,7 +273,7 @@
             // VertexToBox
             // 
             VertexToBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            VertexToBox.Location = new Point(1325, 482);
+            VertexToBox.Location = new Point(1350, 506);
             VertexToBox.Name = "VertexToBox";
             VertexToBox.Size = new Size(45, 39);
             VertexToBox.TabIndex = 21;
@@ -282,18 +283,30 @@
             ShortestEdgeLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             ShortestEdgeLabel.AutoSize = true;
             ShortestEdgeLabel.ForeColor = SystemColors.ButtonHighlight;
-            ShortestEdgeLabel.Location = new Point(1422, 485);
+            ShortestEdgeLabel.Location = new Point(1440, 513);
             ShortestEdgeLabel.Name = "ShortestEdgeLabel";
             ShortestEdgeLabel.Size = new Size(29, 32);
             ShortestEdgeLabel.TabIndex = 22;
             ShortestEdgeLabel.Text = "...";
+            // 
+            // btnNextMtxStep
+            // 
+            btnNextMtxStep.ForeColor = SystemColors.ActiveCaptionText;
+            btnNextMtxStep.Location = new Point(1373, 157);
+            btnNextMtxStep.Name = "btnNextMtxStep";
+            btnNextMtxStep.Size = new Size(143, 199);
+            btnNextMtxStep.TabIndex = 23;
+            btnNextMtxStep.Text = "Steps of  matrix calcu-\r\nlations";
+            btnNextMtxStep.UseVisualStyleBackColor = true;
+            btnNextMtxStep.Click += btnNextMtxStep_Click;
             // 
             // Scene
             // 
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Teal;
-            ClientSize = new Size(1512, 1146);
+            ClientSize = new Size(1528, 1170);
+            Controls.Add(btnNextMtxStep);
             Controls.Add(ShortestEdgeLabel);
             Controls.Add(VertexToBox);
             Controls.Add(VertexFromBox);
@@ -353,5 +366,6 @@
         private TextBox VertexFromBox;
         private TextBox VertexToBox;
         private Label ShortestEdgeLabel;
+        private Button btnNextMtxStep;
     }
 }

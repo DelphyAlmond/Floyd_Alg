@@ -25,6 +25,7 @@ namespace FloydAlg
         int indexOfCurrentAction = 0;
 
         InformationForm form;
+        GraphicImplementationForm scene;
 
         public Scene()
         {
@@ -288,6 +289,7 @@ namespace FloydAlg
             drawTool.RedrawGraph(graphPanel, graph, vertexPositions);
             // algorithmImplementation = new FloydWarshallAlg(graph);
             if ((VertexFromBox.Text != null && VertexToBox.Text != null) &&
+                (VertexFromBox.Text != VertexToBox.Text) &&
                 graph.Vertices.ContainsKey(VertexFromBox.Text) &&
                 graph.Vertices.ContainsKey(VertexToBox.Text))
             {
@@ -297,9 +299,17 @@ namespace FloydAlg
                 List<String> pathBetween = algorithmImplementation.GetShortestPath(VertexFromBox.Text, VertexToBox.Text);
                 drawTool.drawVertexPath(graphPanel, vertexPositions, pathBetween);
             }
-            else MessageBox.Show("Check if textBoxes are filled with existing vertecies.",
+            else MessageBox.Show("Check if textBoxes are filled with existing DIFFERENT vertecies.",
                 "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+
+        private void btnNextMtxStep_Click(object sender, EventArgs e)
+        {
+            scene = new GraphicImplementationForm(graph.Vertices, vertexPositions);
+            // algorithmImplementation.firstFill
+            scene.Show();
+        }
+
 
         /*  [ Unnecessary ]
         private void matrixCalculations_Click(object sender, EventArgs e)

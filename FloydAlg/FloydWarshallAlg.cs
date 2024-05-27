@@ -11,6 +11,7 @@ namespace FloydAlg
         private Dictionary<string, int> vertexIndexMap;
         private int[,] dist;
         private int[,] next;
+        public int[,] firstFill;
         public int[,] currentFill;
         public int elms = 0;
 
@@ -62,7 +63,7 @@ namespace FloydAlg
                 }
             }
 
-            currentFill = dist;
+            firstFill = dist;
         }
 
         /* For using in Scene */
