@@ -21,5 +21,10 @@ namespace FloydAlg
         {
             Connections[neighbor] = weight; // obj of vertex <-> price of connection
         }
+
+        public void RemoveConnection(Vertex neighbor)
+        {
+            Connections.Remove(neighbor);
+        }
     }
 }

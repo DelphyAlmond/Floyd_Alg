@@ -46,9 +46,10 @@ namespace FloydAlg
             // Draw vertices
             foreach (var entry in vertexPositions)
             {
-                string vertexName = entry.Key;
-                Point Vcenter = entry.Value;
-                stringInEllipse(g, 0, vertexName, Vcenter);
+                if (graph.Vertices.ContainsKey(entry.Key))
+                {
+                    stringInEllipse(g, 0, entry.Key, entry.Value);
+                }
             }
         }
 
@@ -72,10 +73,7 @@ namespace FloydAlg
         private void DrawArrow(Graphics g, Point source, Point destination, int color)
         {
             Pen line = new Pen(Color.DeepPink, 4);
-            if (color == 0)
-            {
-                line = new Pen(Color.Teal, 4);
-            }
+            if (color == 0) line = new Pen(Color.Teal, 4);
 
             // Draw arrowhead
             // line.EndCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor;

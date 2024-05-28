@@ -12,7 +12,6 @@ namespace FloydAlg
         private int[,] dist;
         private int[,] next;
         public int[,] firstFill;
-        public int[,] currentFill;
         public int elms = 0;
 
         public FloydWarshallAlg(Graph graph)
@@ -31,15 +30,14 @@ namespace FloydAlg
                 index++;
             }
 
-            int n = graph.Vertices.Count;
-            dist = new int[n, n];
-            next = new int[n, n];
-            elms = n;
+            elms = graph.Vertices.Count;
+            dist = new int[elms, elms];
+            next = new int[elms, elms];
 
             // Initialize distance and next arrays
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < elms; i++)
             {
-                for (int j = 0; j < n; j++)
+                for (int j = 0; j < elms; j++)
                 {
                     dist[i, j] = (i == j) ? 0 : 101;
                     // according to NumericUpDown -> 1 - 100(max)
@@ -56,7 +54,7 @@ namespace FloydAlg
 
                 foreach (var endVertex in startVertex.Connections.Keys)
                 {
-                    int endIndex = vertexIndexMap[endVertex.Name];
+                    int endIndex = vertexIndexMap[endVertex.Name]; // remove unabled vertex connections in scene [!]
                     int weight = startVertex.Connections[endVertex];
                     dist[startIndex, endIndex] = weight;
                     next[startIndex, endIndex] = endIndex;
@@ -67,17 +65,14 @@ namespace FloydAlg
         }
 
         /* For using in Scene */
-        public void SearchPath()
+        public int[,] SearchPath()
         {
-            int n = dist.GetLength(0);
-
             // Floyd-Warshall algorithm :
-
-            for (int k = 0; k < n; k++)
+            for (int k = 0; k < elms; k++)
             {
-                for (int i = 0; i < n; i++)
+                for (int i = 0; i < elms; i++)
                 {
-                    for (int j = 0; j < n; j++)
+                    for (int j = 0; j < elms; j++)
                     {
                         if (dist[i, k] != 101 && dist[k, j] != 101 &&
                             dist[i, j] > dist[i, k] + dist[k, j]) {
@@ -89,10 +84,10 @@ namespace FloydAlg
                 }
             }
 
-            currentFill = dist;
+            return dist;
         }
 
-        public int[,] GetNextAlgStep()
+        public int[,] GetIndexAlgStep()
         {
             return next;
         }
@@ -111,7 +106,7 @@ namespace FloydAlg
             }
         }
 
-        /* Add use with the dict in Scene [!] ^^^ connect with prev. function */
+        /* reassamble (make sure current information states) */
         public List<string> GetShortestPath(string start, string end)
         {
             List<string> path = new List<string>();

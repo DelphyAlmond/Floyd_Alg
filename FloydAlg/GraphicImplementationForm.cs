@@ -14,6 +14,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
 using System.Xml.Linq;
+using System.Windows.Forms.VisualStyles;
 
 namespace FloydAlg
 {
@@ -27,6 +28,8 @@ namespace FloydAlg
         private int[,] next;
         private Dictionary<string, int> vertexIndexMap;
         private string[] names;
+        private StringFormat stringFormat = new StringFormat();
+
         private int currentK = 0;
         private int currentS = 0;
         private int currentJ = 0;
@@ -34,6 +37,13 @@ namespace FloydAlg
         private string currVertexName;
         private string currMiddleNeighbourName;
         private string endVertexName;
+
+        private Point start;
+        private Point middle;
+        private Point finish;
+
+        private int withS = 0, withE = 0;
+        private int SEWeight = 0;
 
         public GraphicImplementationForm(Dictionary<string, Vertex> v, Dictionary<string, Point> vP)
         {
@@ -44,13 +54,17 @@ namespace FloydAlg
             AddTimer();
             InitializeGraph(vertices);
 
+            stringFormat.Alignment = StringAlignment.Center;
+            stringFormat.LineAlignment = StringAlignment.Center;
+
             g = scenePanel.CreateGraphics();
+            // scrollBarA.Value = vertices.Count;
         }
 
         private void AddTimer()
         {
             animationTimer = new Timer();
-            animationTimer.Interval = 200; // ms
+            animationTimer.Interval = 800; // ms
             animationTimer.Tick += OnAnimationTick;
             // animationTimer.Tick += new EventHandler(OnAnimationTick);
         }
@@ -73,7 +87,7 @@ namespace FloydAlg
             {
                 for (int j = 0; j < n; j++)
                 {
-                    dist[i, j] = (i == j) ? 0 : int.MaxValue;
+                    dist[i, j] = (i == j) ? 0 : 101;
                     next[i, j] = -1;
                 }
             }
@@ -100,39 +114,54 @@ namespace FloydAlg
         {
             if (currentK < n)
             {
-                if (currentS < n)
+                for (; currentS < n; currentS++)
                 {
+                    if (currentS == currentK)
+                    {
+                        return;
+                    }
+
                     currVertexName = names[currentS];
+
                     for (; currentJ < n; currentJ++)
                     {
+                        if (currentJ == currentS)
+                        {
+                            return;
+                        }
+
                         if (dist[currentS, currentK] >= 101 && dist[currentK,
                             currentJ] >= 101 && dist[currentS, currentJ] >
                             dist[currentS, currentK] + dist[currentK, currentJ])
                         {
                             dist[currentS, currentJ] = dist[currentS, currentK]
                                 + dist[currentK, currentJ];
+
                             currMiddleNeighbourName = names[currentK];
+
+                            withS = dist[currentS, currentK];
+                            withE = dist[currentK, currentJ];
+                            SEWeight = 0;
                         }
-                        else currMiddleNeighbourName = null;
+                        else
+                        {
+                            currMiddleNeighbourName = null;
+                            SEWeight = dist[currentS, currentJ];
+                        }
 
                         endVertexName = names[currentJ];
 
                         // Visualize the current step
                         HighlightVertices(currVertexName, currMiddleNeighbourName, endVertexName);
-                        scrollBarA.Value = currentK * n * n + currentS * n + currentJ;
+
                         return; // Wait for the next timer tick
                     }
-                    currentJ = 0;
-                    currentS++;
-                }
-                else
-                {
-                    currentS = 0;
-                    currentK++;
                 }
             }
-            else
-            {
+
+            currentK++;
+
+            if (currentK == n) {
                 // Check if the animation should stop
                 animationTimer.Stop();
             }
@@ -140,29 +169,24 @@ namespace FloydAlg
 
         private void OnScrollBarValueChanged(object sender, EventArgs e)
         {
-            int value = scrollBarA.Value;
-            currentK = value / (n * n);
-            value %= (n * n);
-            currentS = value / n;
-            currentJ = value % n;
+            // ---------------------------------------------- [ EDIT ] !
+            currentK = 0;
+            currentS = scrollBarA.Value - 1;
+            currentJ = 0;
         }
 
         private void HighlightVertices(string vertexName, string middleName, string endName)
         {
             g.Clear(scenePanel.BackColor); // Clear the panel
             Pen line = new Pen(Color.DeepPink, 4);
-            Point start = new Point(0, 0);
-            Point middle = new Point(0, 0);
-            Point finish = new Point(0, 0);
 
             // Draw all vertices
             foreach (var kvp in vertexPositions)
             {
                 Point pos = kvp.Value;
                 g.FillEllipse(Brushes.Yellow, pos.X, pos.Y, 40, 40);
-                g.DrawString(kvp.Key, new Font("Arial", 12, FontStyle.Bold,
-                GraphicsUnit.Point), Brushes.Teal, start.X - 16, start.Y - 18);
             }
+
             // ( - )
             // Highlight the current vertex
             if (vertexName != null && vertexPositions.ContainsKey(vertexName))
@@ -182,23 +206,41 @@ namespace FloydAlg
                 finish = vertexPositions[endName];
             }
 
-            if (middleName != null)
+            if (SEWeight == 0)
             {
                 g.DrawLine(line, start, middle);
                 g.DrawLine(line, middle, finish);
+
+                g.DrawString(((withS < 101) ? withS.ToString() : "><"),
+                    new Font("Arial", 12, FontStyle.Bold, GraphicsUnit.Point),
+                    Brushes.DeepPink, Math.Abs(middle.X + start.X) / 2,
+                    Math.Abs(middle.Y + start.Y) / 2 - 20, stringFormat);
+
+                g.DrawString(((withE < 101) ? withE.ToString() : "><"),
+                    new Font("Arial", 12, FontStyle.Bold, GraphicsUnit.Point),
+                    Brushes.DeepPink, Math.Abs(finish.X + middle.X) / 2,
+                    Math.Abs(finish.Y + middle.Y) / 2 - 20, stringFormat);
+
                 g.FillEllipse(Brushes.DeepPink, middle.X - 8, middle.Y - 8, 40, 40);
                 g.DrawString(middleName, new Font("Arial", 12, FontStyle.Bold,
-                GraphicsUnit.Point), Brushes.White, middle.X - 16, middle.Y - 18);
+                GraphicsUnit.Point), Brushes.White, middle.X, middle.Y - 8);
             }
-            else g.DrawLine(line, start, finish);
+            else
+            {
+                g.DrawLine(line, start, finish);
+                g.DrawString(((SEWeight < 101) ? SEWeight.ToString() : "><"),
+                    new Font("Arial", 12, FontStyle.Bold, GraphicsUnit.Point),
+                    Brushes.Teal, Math.Abs(finish.X + start.X) / 2,
+                    Math.Abs(finish.Y + start.Y) / 2 - 20, stringFormat);
+            }
 
             g.FillEllipse(Brushes.Teal, finish.X - 8, finish.Y - 8, 40, 40);
             g.FillEllipse(Brushes.Teal, start.X - 8, start.Y - 8, 40, 40);
-            
+
             g.DrawString(vertexName, new Font("Arial", 12, FontStyle.Bold,
-                GraphicsUnit.Point), Brushes.White, start.X - 16, start.Y - 18);
+                GraphicsUnit.Point), Brushes.White, start.X, start.Y - 8);
             g.DrawString(endName, new Font("Arial", 12, FontStyle.Bold,
-                GraphicsUnit.Point), Brushes.White, finish.X - 16, finish.Y - 18);
+                GraphicsUnit.Point), Brushes.White, finish.X, finish.Y - 8);
         }
     }
 }

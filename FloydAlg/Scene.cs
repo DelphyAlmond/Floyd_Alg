@@ -20,12 +20,16 @@ namespace FloydAlg
         private List<StateStep> steps;
         private Graph graph;
         private FloydWarshallAlg algorithmImplementation;
+        int[,] currentMatrix;
+
         private CanvasRedraw drawTool;
 
         int indexOfCurrentAction = 0;
 
-        InformationForm form;
-        GraphicImplementationForm scene;
+        private InformationForm form;
+        private GraphicImplementationForm scene;
+
+        private FileLoader loader;
 
         public Scene()
         {
@@ -41,17 +45,18 @@ namespace FloydAlg
             steps = new List<StateStep>();
             drawTool = new CanvasRedraw();
             // empty beginning
-            steps.Add(new StateStep("> Obj of Graph created (start)", graph));
+            steps.Add(new StateStep("> Obj of Graph created (start)", graph, vertexPositions));
         }
 
         private void AddStateStep(string action)
         {
             Graph snapshot = graph.Clone();
 
-            StateStep state = new StateStep(action, snapshot);
+            StateStep state = new StateStep(action, snapshot, vertexPositions);
             steps.Add(state);
 
             stateBox.Items.Add(state); // adds to the listBox
+
             indexOfCurrentAction++;
         }
 
@@ -67,7 +72,6 @@ namespace FloydAlg
             // Check if vertexName is empty ( !!! only proceed if startV and destinationV are filled)
             if (string.IsNullOrEmpty(vertexName))
             {
-
                 string startVertexName = startV.Text.Trim();
                 string destinationVertexName = destinationV.Text.Trim();
 
@@ -106,6 +110,9 @@ namespace FloydAlg
 
                 AddStateStep("> New vertex '" + vertexName + "' added"); // ------------------------ [ STATUS UPDATE ]
 
+                // Redraw the graph
+                drawTool.RedrawGraph(graphPanel, graph, vertexPositions);
+
                 // Enable groupBox if 2 already exist and I can connect them
                 if (MoreThanOneVertex()) Connector.Enabled = true;
             }
@@ -128,10 +135,13 @@ namespace FloydAlg
             // Store vertex position
             vertexPositions[vertexName] = position;
 
-            // Redraw the graph
-            drawTool.RedrawGraph(graphPanel, graph, vertexPositions);
-
             fileWritingDown(); // writing down to file
+        }
+
+        public void DeleteVertexFromGraph(string vertexName)
+        {
+            graph.RemoveVertex(vertexName);
+            vertexPositions.Remove(vertexName);
         }
 
         private void btnClear_Click(object sender, EventArgs e)
@@ -155,30 +165,16 @@ namespace FloydAlg
         private void btnRunAlgorithm_Click(object sender, EventArgs e)
         {
             algorithmImplementation = new FloydWarshallAlg(graph);
-            int[,] currentMatrix = algorithmImplementation.currentFill;
-            int cnt = algorithmImplementation.elms;
+            currentMatrix = algorithmImplementation.SearchPath(); // recounted with 101(infinity\max)
             // represent in graphics
-            //  ( Label[,] numbers = new Label[cnt, cnt]; )
-            int lbW = 40;
-            int lbH = 30;
-
-            // DrawMatrix(currentMatrix, cnt, lbW, lbH);
-
-            algorithmImplementation.SearchPath(); // recounted with 101(infinity\max)
-            currentMatrix = algorithmImplementation.currentFill;
-            DrawMatrix(currentMatrix, cnt, lbW, lbH);
+            DrawMatrix(currentMatrix, algorithmImplementation.elms, 40, 30);
         }
 
         private void DrawMatrix(int[,] mtx, int n, int w, int h) // n is size of all 2DArr
         {
             Graphics g = Matrixpanel.CreateGraphics();
-
-            if (mtx.Length == 0 || n == 0 || w == 0 || h == 0)
-            {
-                Matrixpanel.Controls.Clear();
-                g.Clear(Color.Teal);
-                return;
-            }
+            g.Clear(Color.Teal);
+            Matrixpanel.Controls.Clear();
 
             // space between, tiles bounds
             Padding padding = new Padding(10);
@@ -234,26 +230,22 @@ namespace FloydAlg
             string vertexToDelete = txtVertexName.Text.Trim();
             // Assuming txtVertexToDelete is a TextBox to enter the vertex name to delete
 
-            if (graph.Vertices.ContainsKey(vertexToDelete))
+            if (graph.Vertices.ContainsKey(vertexToDelete)
+                && vertexPositions.ContainsKey(vertexToDelete))
             {
                 // Remove the vertex from the graph
-                graph.Vertices.Remove(vertexToDelete);
+                // + vertex position from the dictionary
+                // + [!] from vertex connections
+                DeleteVertexFromGraph(vertexToDelete);
 
-                // Remove the vertex position from the dictionary
-                if (vertexPositions.ContainsKey(vertexToDelete))
-                {
-                    vertexPositions.Remove(vertexToDelete);
-                }
+                AddStateStep("> Vertex '" + vertexToDelete + "' was removed "); // -------- [ STATUS UPDATE ]
 
-                AddStateStep("> Vertex '" + vertexToDelete + "' was removed ");
-
-                // Redraw the graph to reflect the changes
+                // Reflect the changes
                 drawTool.RedrawGraph(graphPanel, graph, vertexPositions);
 
-                // Update UI based on the graph state
                 if (MoreThanOneVertex()) Connector.Enabled = true;
 
-                fileWritingDown(); // write down to txt file
+                fileWritingDown(); // writing down to file
             }
 
             else MessageBox.Show("Vertex not found in the graph.", "Error",
@@ -262,19 +254,32 @@ namespace FloydAlg
 
         private void fileWritingDown()
         {
-            // create new class !!!
+            // state loader :
+            loader.WriteGraphToFile(graph);
+            loader.SaveDataBin(graph, vertexPositions);
 
+            loader.rememberCurrStates(steps);
         }
 
         private void prevState_Click(object sender, EventArgs e)
         {
-            if (indexOfCurrentAction > 0) graph = steps[--indexOfCurrentAction].GraphSnapshot;
+            if (indexOfCurrentAction > 0)
+            {
+                graph = steps[--indexOfCurrentAction].getSnapshot();
+                vertexPositions = steps[--indexOfCurrentAction].getVPos();
+            }
+
             drawTool.RedrawGraph(graphPanel, graph, vertexPositions);
         }
 
         private void nextState_Click(object sender, EventArgs e)
         {
-            if (indexOfCurrentAction < steps.Count - 1) graph = steps[++indexOfCurrentAction].GraphSnapshot;
+            if (indexOfCurrentAction < steps.Count - 1)
+            {
+                graph = steps[++indexOfCurrentAction].getSnapshot();
+                vertexPositions = steps[++indexOfCurrentAction].getVPos();
+            }
+
             drawTool.RedrawGraph(graphPanel, graph, vertexPositions);
         }
 
@@ -310,15 +315,23 @@ namespace FloydAlg
             scene.Show();
         }
 
-
-        /*  [ Unnecessary ]
-        private void matrixCalculations_Click(object sender, EventArgs e)
-        {
-            int[,] newCurrentMatrix = algorithmImplementation.GetNextAlgStep();
-            DrawMatrix(newCurrentMatrix, newCurrentMatrix.Length,
-                newCurrentMatrix.GetLength(1), newCurrentMatrix.GetLength(0)); // all elements w * h, w, h);
-        }
+        /* choosing in ListBox [?]
+        private void stateBox_SelectedIndexChanged(object sender, EventArgs e)
         */
+
+        private void btnPrevSLoadFromFile(object sender, EventArgs e)
+        {
+            graph = loader.LoadDataBin();
+            vertexPositions = loader.getPos();
+            steps = loader.LoadFromFile("Loaded states\\StatesOfGraphJson.json");
+
+            foreach (var step in steps)
+            {
+                AddStateStep(step.Action);
+            }
+
+            drawTool.RedrawGraph(graphPanel, graph, vertexPositions);
+        }
     }
 }
 

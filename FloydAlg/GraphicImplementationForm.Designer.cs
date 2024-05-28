@@ -30,32 +30,33 @@
         {
             scenePanel = new Panel();
             scrollBarA = new HScrollBar();
-
             SuspendLayout();
             // 
             // scenePanel
             // 
             scenePanel.BackColor = Color.MintCream;
-            scenePanel.Location = new Point(12, 12);
+            scenePanel.Location = new Point(12, 22);
             scenePanel.Name = "scenePanel";
-            scenePanel.Size = new Size(1050, 1045);
+            scenePanel.Size = new Size(1050, 1164);
             scenePanel.TabIndex = 0;
             // 
-            // scrollBar
+            // scrollBarA
             // 
-            scrollBarA.Location = new Point(12, 1078);
-            scrollBarA.Name = "scrollBar";
+            scrollBarA.LargeChange = 1;
+            scrollBarA.Location = new Point(12, 1205);
+            scrollBarA.Minimum = 1;
+            scrollBarA.Name = "scrollBarA";
             scrollBarA.Size = new Size(1050, 45);
             scrollBarA.TabIndex = 1;
-            scrollBarA.Maximum = vertices.Count * vertices.Count;
-            scrollBarA.ValueChanged += new EventHandler(OnScrollBarValueChanged);
+            scrollBarA.Value = 1;
+            scrollBarA.ValueChanged += OnScrollBarValueChanged;
             // 
             // GraphicImplementationForm
             // 
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.DeepPink;
-            ClientSize = new Size(1074, 1144);
+            ClientSize = new Size(1074, 1269);
             Controls.Add(scrollBarA);
             Controls.Add(scenePanel);
             Name = "GraphicImplementationForm";

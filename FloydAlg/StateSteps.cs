@@ -9,12 +9,27 @@ namespace FloydAlg
     public class StateStep
     {
         public string Action { get; set; }
-        public Graph GraphSnapshot { get; set; }
 
-        public StateStep(string action, Graph graphSnapshot)
+        private Graph GraphSnapshot;
+
+        private Dictionary<string, Point> posInf;
+
+        public Graph getSnapshot()
+        {
+            return GraphSnapshot;
+        }
+
+        public Dictionary<string, Point> getVPos()
+        {
+            return posInf;
+        }
+
+        public StateStep(string action, Graph graphSnapshot,
+            Dictionary<string, Point> positions)
         {
             Action = action;
             GraphSnapshot = graphSnapshot;
+            posInf = positions;
         }
 
         public override string ToString()
