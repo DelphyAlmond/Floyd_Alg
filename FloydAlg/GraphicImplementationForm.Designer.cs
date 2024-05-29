@@ -44,7 +44,7 @@
             // 
             scrollBarA.LargeChange = 1;
             scrollBarA.Location = new Point(12, 1205);
-            scrollBarA.Minimum = 1;
+            scrollBarA.Maximum = vertices.Count - 1; // * vertices.Count; // - [*]
             scrollBarA.Name = "scrollBarA";
             scrollBarA.Size = new Size(1050, 45);
             scrollBarA.TabIndex = 1;

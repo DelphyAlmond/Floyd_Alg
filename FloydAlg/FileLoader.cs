@@ -5,8 +5,10 @@ using System.Text.Json;
 public class FileLoader
 {
     private List<StateStep> states;
-    private Dictionary<string, Point> lastSessionPositions;
+    private Dictionary<string, Point> lastSessionPositions = new Dictionary<string, Point>();
     // private int chosenIndex;
+    private string filePath = "C:\\Users\\inna\\source\\repos\\FloydAlg\\FloydAlg\\Loaded states\\StatesOfGraphJson.json";
+    private string binFile = "C:\\Users\\inna\\source\\repos\\FloydAlg\\FloydAlg\\Loaded states\\GraphData.bin";
 
     public Dictionary<string, Point> getPos()
     {
@@ -16,15 +18,15 @@ public class FileLoader
     public void rememberCurrStates(List<StateStep> sts)
     {
         states = sts;
-        SaveToFile("Loaded states\\StatesOfGraphJson.json");
+        SaveToFile();
     }
 
     public void WriteGraphToFile(Graph graph)
     {
-        string filePath = "Loaded states\\StatesOfGraphMyFormat.txt";
+        string fileN = "C:\\Users\\inna\\source\\repos\\FloydAlg\\FloydAlg\\Loaded states\\StatesOfGraphMyFormat.txt";
 
         // Use StreamWriter to append to the file
-        using (StreamWriter sw = new StreamWriter(filePath, true))
+        using (StreamWriter sw = new StreamWriter(fileN, true))
         {
             // Start of graph notation
             sw.Write("\n{");
@@ -41,13 +43,13 @@ public class FileLoader
                         sw.Write(", ");
                     }
 
-                    sw.Write($"\"{connection.Key.Name}\" : {connection.Value}");
+                    sw.Write($"'{connection.Key.Name}' : {connection.Value}");
                     firstConnection = false;
                 }
 
                 sw.Write(")]");
 
-                // Add comma between vertices, but not after the last one
+                // between vertices, but not after the last one
                 if (!vertex.Equals(graph.Vertices.Last()))
                 {
                     sw.Write(" , ");
@@ -63,9 +65,13 @@ public class FileLoader
     //           > stateSteps.getSnapshot(), > algorithmImplementation.firstFill
     public void SaveDataBin(Graph graph, Dictionary<string, Point> positions)
     {
-        string filePath = "Loaded states\\GraphData.bin";
 
-        using (BinaryWriter writer = new BinaryWriter(File.Open(filePath, FileMode.Append)))
+        if (File.Exists(binFile))
+        {
+            File.Delete(binFile);
+        }
+
+        using (BinaryWriter writer = new BinaryWriter(File.Open(binFile, FileMode.Append)))
         {
             // Write the number of vertices
             writer.Write(graph.Vertices.Count);
@@ -107,13 +113,12 @@ public class FileLoader
 
     public Graph LoadDataBin()
     {
-        string filePath = "Loaded states\\GraphData.bin";
         Dictionary<string, Vertex> vertices = new Dictionary<string, Vertex>();
         // Dictionary<string, Point> positions = new Dictionary<string, Point>();
         Graph readenGraph = new Graph();
         // int[,] distances;
 
-        using (BinaryReader reader = new BinaryReader(File.Open(filePath, FileMode.Open)))
+        using (BinaryReader reader = new BinaryReader(File.Open(binFile, FileMode.Open)))
         {
             // Read the number of vertices
             int vertexCount = reader.ReadInt32();
@@ -142,36 +147,22 @@ public class FileLoader
                 }
                 vertices[vertexName] = vertex;
             }
-
-            // Read distance matrix
-            /*
-            int n = reader.ReadInt32();
-            distances = new int[n, n];
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < n; j++)
-                {
-                    distances[i, j] = reader.ReadInt32();
-                }
-            }
-            */
-
-            readenGraph.setVertices(vertices);
         }
 
+        readenGraph.setVertices(vertices);
         return readenGraph;
     }
 
-    public bool SaveToFile(string filename)
+    public bool SaveToFile()
     {
         try
         {
-            string extension = Path.GetExtension(filename).ToLower();
+            string extension = Path.GetExtension(filePath).ToLower();
             if (extension == ".json")
             {
                 // save to JSON
                 string json = JsonSerializer.Serialize(states);
-                File.WriteAllText(filename, json);
+                File.WriteAllText(filePath, json);
             }
             else
             {
@@ -189,25 +180,24 @@ public class FileLoader
         }
     }
 
-    public List<StateStep> LoadFromFile(string filename)
+    public List<StateStep> LoadFromFile()
     {
         try
         {
-            string extension = Path.GetExtension(filename).ToLower();
+            string extension = Path.GetExtension(filePath).ToLower();
             if (extension == ".json")
             {
                 // from JSON
-                string json = File.ReadAllText(filename);
+                string json = File.ReadAllText(filePath);
                 states = JsonSerializer.Deserialize<List<StateStep>>(json);
+                return states;
             }
             else
             {
                 // unsupported [!]
                 Console.WriteLine("Unsupported file extension");
-                return null;
+                return states;
             }
-
-            return states;
         }
         catch (Exception ex)
         {

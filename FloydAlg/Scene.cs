@@ -29,7 +29,7 @@ namespace FloydAlg
         private InformationForm form;
         private GraphicImplementationForm scene;
 
-        private FileLoader loader;
+        private FileLoader loader = new FileLoader();
 
         public Scene()
         {
@@ -255,10 +255,13 @@ namespace FloydAlg
         private void fileWritingDown()
         {
             // state loader :
-            loader.WriteGraphToFile(graph);
-            loader.SaveDataBin(graph, vertexPositions);
+            if (loader != null)
+            {
+                loader.WriteGraphToFile(graph);
+                loader.SaveDataBin(graph, vertexPositions);
 
-            loader.rememberCurrStates(steps);
+                loader.rememberCurrStates(steps);
+            }
         }
 
         private void prevState_Click(object sender, EventArgs e)
@@ -323,12 +326,13 @@ namespace FloydAlg
         {
             graph = loader.LoadDataBin();
             vertexPositions = loader.getPos();
-            steps = loader.LoadFromFile("Loaded states\\StatesOfGraphJson.json");
 
-            foreach (var step in steps)
-            {
-                AddStateStep(step.Action);
-            }
+            // steps = loader.LoadFromFile();
+
+            // foreach (var step in steps)
+            // {
+            //    AddStateStep(step.Action);
+            // }
 
             drawTool.RedrawGraph(graphPanel, graph, vertexPositions);
         }
