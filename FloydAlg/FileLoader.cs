@@ -9,24 +9,22 @@ public class FileLoader
     // private int chosenIndex;
     private string filePath = "C:\\Users\\inna\\source\\repos\\FloydAlg\\FloydAlg\\Loaded states\\StatesOfGraphJson.json";
     private string binFile = "C:\\Users\\inna\\source\\repos\\FloydAlg\\FloydAlg\\Loaded states\\GraphData.bin";
+    private string fileMyformat = "C:\\Users\\inna\\source\\repos\\FloydAlg\\FloydAlg\\Loaded states\\StatesOfGraphMyFormat.txt";
 
     public Dictionary<string, Point> getPos()
     {
         return lastSessionPositions;
     }
 
-    public void rememberCurrStates(List<StateStep> sts)
+    public List<StateStep> getCurrStates()
     {
-        states = sts;
-        SaveToFile();
+        return states;
     }
 
-    public void WriteGraphToFile(Graph graph)
+    public void WriteCurrGraphToFile(Graph graph)
     {
-        string fileN = "C:\\Users\\inna\\source\\repos\\FloydAlg\\FloydAlg\\Loaded states\\StatesOfGraphMyFormat.txt";
-
         // Use StreamWriter to append to the file
-        using (StreamWriter sw = new StreamWriter(fileN, true))
+        using (StreamWriter sw = new StreamWriter(fileMyformat, true))
         {
             // Start of graph notation
             sw.Write("\n{");
@@ -153,16 +151,16 @@ public class FileLoader
         return readenGraph;
     }
 
-    public bool SaveToFile()
+    public bool SaveToFile(string fp, List<StateStep> sts)
     {
         try
         {
-            string extension = Path.GetExtension(filePath).ToLower();
+            string extension = Path.GetExtension(fp).ToLower();
             if (extension == ".json")
             {
                 // save to JSON
-                string json = JsonSerializer.Serialize(states);
-                File.WriteAllText(filePath, json);
+                string json = JsonSerializer.Serialize(sts);
+                File.WriteAllText(fp, json);
             }
             else
             {
@@ -180,29 +178,29 @@ public class FileLoader
         }
     }
 
-    public List<StateStep> LoadFromFile()
+    public bool LoadFromFile(string fp)
     {
         try
         {
-            string extension = Path.GetExtension(filePath).ToLower();
+            string extension = Path.GetExtension(fp).ToLower();
             if (extension == ".json")
             {
-                // from JSON
-                string json = File.ReadAllText(filePath);
+                // from JSON to List<StateStep>
+                string json = File.ReadAllText(fp);
                 states = JsonSerializer.Deserialize<List<StateStep>>(json);
-                return states;
+                return true;
             }
             else
             {
                 // unsupported [!]
                 Console.WriteLine("Unsupported file extension");
-                return states;
+                return false;
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error loading file: {ex.Message}");
-            return null;
+            return false;
         }
     }
 }

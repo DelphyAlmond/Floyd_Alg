@@ -1,4 +1,6 @@
-﻿namespace FloydAlg
+﻿using System.Windows.Forms;
+
+namespace FloydAlg
 {
     partial class Scene
     {
@@ -46,15 +48,23 @@
             Matrixpanel = new Panel();
             InfButton = new Button();
             btnShortestBetween = new Button();
-            label2 = new Label();
             labelUnabled = new Label();
             VertexFromBox = new TextBox();
             VertexToBox = new TextBox();
             ShortestEdgeLabel = new Label();
             btnNextMtxStep = new Button();
             button1 = new Button();
+            saveFileDialog = new SaveFileDialog();
+            openFileDialog = new OpenFileDialog();
+            menuKeeper = new Panel();
+            menuStripChooser = new MenuStrip();
+            toolStripMenuItem = new ToolStripMenuItem();
+            toolMenuItemSave = new ToolStripMenuItem();
+            toolMenuItemLoad = new ToolStripMenuItem();
+
             ((System.ComponentModel.ISupportInitialize)numConnectionWeight).BeginInit();
             Connector.SuspendLayout();
+            menuKeeper.SuspendLayout();
             SuspendLayout();
             // 
             // btnAddVertex
@@ -202,8 +212,6 @@
             stateBox.Name = "stateBox";
             stateBox.Size = new Size(571, 228);
             stateBox.TabIndex = 12;
-            // stateBox.SelectedIndexChanged += stateBox_SelectedIndexChanged;
-
             // 
             // btnRunAlgorithm
             // 
@@ -221,7 +229,7 @@
             Matrixpanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             Matrixpanel.Location = new Point(983, 87);
             Matrixpanel.Name = "Matrixpanel";
-            Matrixpanel.Size = new Size(571, 584);
+            Matrixpanel.Size = new Size(571, 500);
             Matrixpanel.TabIndex = 14;
             // 
             // InfButton
@@ -245,15 +253,7 @@
             btnShortestBetween.Text = "Show shortest path";
             btnShortestBetween.UseVisualStyleBackColor = true;
             btnShortestBetween.Click += btnShortestBetween_Click;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(929, 476);
-            label2.Name = "label2";
-            label2.Size = new Size(0, 32);
-            label2.TabIndex = 18;
-            // 
+            //
             // labelUnabled
             // 
             labelUnabled.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
@@ -314,19 +314,70 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += btnPrevSLoadFromFile;
             // 
+            // saveFileDialog
+            // 
+            saveFileDialog.Filter = "json file (*.json)|*.json";
+            // 
+            // openFileDialog
+            // 
+            openFileDialog.FileName = "openFileDialog1";
+            openFileDialog.Filter = "All files (*.json)|*.json|JSON files (*.json)|*.json";
+            // 
+            // menuKeeper
+            // 
+            menuKeeper.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            menuKeeper.Controls.Add(menuStripChooser);
+            menuKeeper.Location = new Point(983, 615);
+            menuKeeper.Name = "menuKeeper";
+            menuKeeper.Size = new Size(571, 43);
+            menuKeeper.TabIndex = 15;
+            // 
+            // menuStripChooser
+            // 
+            menuStripChooser.Items.AddRange(new ToolStripItem[] { toolStripMenuItem });
+            menuStripChooser.Location = new Point(0, 0);
+            menuStripChooser.Name = "menuStripChooser";
+            menuStripChooser.Size = new Size(571, 42);
+            menuStripChooser.TabIndex = 0;
+            menuStripChooser.Text = "menuStrip";
+            // 
+            // toolStripMenuItem
+            // 
+            toolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toolMenuItemSave, toolMenuItemLoad });
+            toolStripMenuItem.Name = "toolStripMenuItem";
+            toolStripMenuItem.Size = new Size(48, 20);
+            toolStripMenuItem.Text = "File";
+            // 
+            // toolStripMenuItemSave
+            //
+            toolMenuItemSave.Name = "toolStripMenuItemSave";
+            toolMenuItemSave.ShortcutKeys = Keys.Control | Keys.S;
+            toolMenuItemSave.Size = new Size(173, 22);
+            toolMenuItemSave.Text = "Save";
+            toolMenuItemSave.Click += fileChooseToSaveTo;
+            // 
+            // toolStripMenuItemLoad
+            // 
+            toolMenuItemLoad.Name = "toolStripMenuItemLoad";
+            toolMenuItemLoad.ShortcutKeys = Keys.Control | Keys.L;
+            toolMenuItemLoad.Size = new Size(173, 22);
+            toolMenuItemLoad.Text = "Download";
+            toolMenuItemLoad.Click += fileToLoadFrom;
+
+            // 
             // Scene
             // 
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Teal;
             ClientSize = new Size(1566, 1212);
+            Controls.Add(menuKeeper);
             Controls.Add(button1);
             Controls.Add(btnNextMtxStep);
             Controls.Add(ShortestEdgeLabel);
             Controls.Add(VertexToBox);
             Controls.Add(VertexFromBox);
             Controls.Add(labelUnabled);
-            Controls.Add(label2);
             Controls.Add(btnShortestBetween);
             Controls.Add(InfButton);
             Controls.Add(Matrixpanel);
@@ -341,11 +392,14 @@
             Controls.Add(Connector);
             Controls.Add(txtVertexName);
             Controls.Add(btnAddVertex);
+            MainMenuStrip = menuStripChooser;
             Name = "Scene";
             Text = "Scene";
             ((System.ComponentModel.ISupportInitialize)numConnectionWeight).EndInit();
             Connector.ResumeLayout(false);
             Connector.PerformLayout();
+            menuKeeper.ResumeLayout(false);
+            menuKeeper.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -375,13 +429,21 @@
         private Panel Matrixpanel;
         private Button InfButton;
         // private Button matrixCalculations;
+        private SaveFileDialog saveFileDialog;
+        private OpenFileDialog openFileDialog;
+
+        private ToolStripMenuItem toolStripMenuItem;
+        private ToolStripMenuItem toolMenuItemSave;
+        private ToolStripMenuItem toolMenuItemLoad;
+
         private Button btnShortestBetween;
-        private Label label2;
         private Label labelUnabled;
         private TextBox VertexFromBox;
         private TextBox VertexToBox;
         private Label ShortestEdgeLabel;
         private Button btnNextMtxStep;
         private Button button1;
+        private Panel menuKeeper;
+        private MenuStrip menuStripChooser;
     }
 }

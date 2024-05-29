@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -186,7 +187,6 @@ namespace FloydAlg
             }
 
             int spaceForLetters = 40;
-
             for (int i = 0; i < n; i++)
             {
                 g.DrawString(vertexPositions.ElementAt(i).Key, Font,
@@ -257,10 +257,46 @@ namespace FloydAlg
             // state loader :
             if (loader != null)
             {
-                loader.WriteGraphToFile(graph);
-                loader.SaveDataBin(graph, vertexPositions);
+                loader.WriteCurrGraphToFile(graph);
+            }
+        }
 
-                loader.rememberCurrStates(steps);
+        private void fileChooseToSaveTo(object sender, EventArgs e)
+        {
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                if (loader.SaveToFile(saveFileDialog.FileName, steps))
+                {
+                    MessageBox.Show("Saved succesfully", "< * >", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Error happened", "< * >", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void fileToLoadFrom(object sender, EventArgs e)
+        {
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                if (loader.LoadFromFile(openFileDialog.FileName))
+                {
+                    steps = loader.getCurrStates();
+
+                    graph = steps[steps.Count - 1].getSnapshot();
+
+                    foreach (var step in steps)
+                    {
+                        AddStateStep(step.Action);
+                    }
+
+                    MessageBox.Show("Uploading succseed", "< * >", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Something went wrong", "< * >", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -269,7 +305,7 @@ namespace FloydAlg
             if (indexOfCurrentAction > 0)
             {
                 graph = steps[--indexOfCurrentAction].getSnapshot();
-                vertexPositions = steps[--indexOfCurrentAction].getVPos();
+                vertexPositions = steps[indexOfCurrentAction].getVPos();
             }
 
             drawTool.RedrawGraph(graphPanel, graph, vertexPositions);
@@ -280,7 +316,7 @@ namespace FloydAlg
             if (indexOfCurrentAction < steps.Count - 1)
             {
                 graph = steps[++indexOfCurrentAction].getSnapshot();
-                vertexPositions = steps[++indexOfCurrentAction].getVPos();
+                vertexPositions = steps[indexOfCurrentAction].getVPos();
             }
 
             drawTool.RedrawGraph(graphPanel, graph, vertexPositions);
@@ -326,13 +362,6 @@ namespace FloydAlg
         {
             graph = loader.LoadDataBin();
             vertexPositions = loader.getPos();
-
-            // steps = loader.LoadFromFile();
-
-            // foreach (var step in steps)
-            // {
-            //    AddStateStep(step.Action);
-            // }
 
             drawTool.RedrawGraph(graphPanel, graph, vertexPositions);
         }
